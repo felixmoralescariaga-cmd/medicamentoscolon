@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Catálogo informativo de Medicamentos Colón. Consulta disponibilidad y precios por mensaje.">
+  <title>Medicamentos Colón | Catálogo</title>
+  <style>
+    :root{
+      --navy:#123047; --blue:#176b87; --teal:#20a38a; --ink:#20313b;
+      --muted:#657782; --paper:#f4f8fa; --white:#fff; --line:#e3ecef;
+      --shadow:0 12px 32px rgba(18,48,71,.08);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+    a{color:inherit}
+    .topbar{background:var(--navy);color:#eaf7fa;padding:10px 5%;font-size:.9rem}
+    .topbar-inner{max-width:1120px;margin:auto;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    header{background:linear-gradient(120deg,#123047 0%,#176b87 65%,#20a38a 120%);color:white;padding:64px 20px 58px;text-align:center}
+    .hero{max-width:850px;margin:auto}
+    .badge{display:inline-block;border:1px solid rgba(255,255,255,.45);border-radius:30px;padding:6px 13px;font-size:.8rem;letter-spacing:.07em;text-transform:uppercase}
+    h1{font-size:clamp(2.2rem,6vw,3.7rem);line-height:1.08;margin:18px 0 12px}
+    .hero p{font-size:1.1rem;color:#e4f4f5;margin:0 auto 25px;max-width:650px}
+    .button{display:inline-block;text-decoration:none;border:0;border-radius:10px;padding:12px 20px;font-weight:700;cursor:pointer}
+    .button-light{background:white;color:var(--navy)}
+    main{max-width:1120px;margin:auto;padding:42px 20px 55px}
+    .intro{text-align:center;margin-bottom:25px}
+    .intro h2{font-size:clamp(1.6rem,4vw,2.2rem);color:var(--navy);margin:0 0 8px}
+    .intro p{color:var(--muted);margin:0}
+    .tools{display:flex;gap:12px;max-width:720px;margin:25px auto 30px;flex-wrap:wrap}
+    .search{flex:1 1 260px;padding:14px 16px;border:1px solid #cfdee4;border-radius:10px;font-size:1rem;background:white;outline:none}
+    .search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,107,135,.12)}
+    .count{align-self:center;color:var(--muted);font-size:.9rem}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 15px;color:var(--blue);font-size:1.08rem;letter-spacing:.035em;text-transform:uppercase}
+    .items{list-style:none;margin:0;padding:0}
+    .items li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #edf2f4;font-size:.96rem}
+    .items li:first-child{border-top:0}
+    .item-name{min-width:0}
+    .price{font-weight:700;color:var(--navy);white-space:nowrap}
+    .empty{display:none;text-align:center;color:var(--muted);padding:35px}
+    .notice{margin:30px 0 0;background:#fff8e8;border:1px solid #f1dfb6;border-radius:12px;padding:17px 19px;color:#654d20;font-size:.92rem}
+    .contact{background:#e9f3f5;text-align:center;padding:42px 20px}
+    .contact-inner{max-width:700px;margin:auto}
+    .contact h2{color:var(--navy);margin:0 0 8px;font-size:1.8rem}
+    .contact p{color:var(--muted);margin:0 0 20px}
+    .button-main{background:var(--teal);color:white}
+    footer{background:var(--navy);color:#c8d9df;text-align:center;padding:18px;font-size:.85rem}
+    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:560px){header{padding:48px 18px}.grid{grid-template-columns:1fr}main{padding:32px 15px}.card{padding:19px}.topbar-inner{justify-content:center;text-align:center}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>Medicamentos Colón</span>
+      <span>Consulta disponibilidad y precios por mensaje</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="hero">
+      <span class="badge">Catálogo de productos</span>
+      <h1>MEDICAMENTOS COLÓN</h1>
+      <p>Consulta nuestro catálogo y escríbenos para confirmar disponibilidad, presentación y precio.</p>
+      <a class="button button-light" href="#catalogo">Ver catálogo</a>
+    </div>
+  </header>
+
+  <main id="catalogo">
+    <section class="intro">
+      <h2>¿Qué estás buscando?</h2>
+      <p>Explora las categorías o escribe el nombre de un producto en el buscador.</p>
+    </section>
+
+    <div class="tools">
+      <input id="search" class="search" type="search" placeholder="Buscar medicamento o categoría..." aria-label="Buscar en el catálogo">
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+
+    <section class="grid" id="productGrid" aria-label="Categorías del catálogo">
+      <article class="card">
+        <h3>Suspensión</h3>
+        <ul class="items">
+          <li><span class="item-name">Nistatina 👶🏻</span><span class="price">1500$</span></li>
+          <li><span class="item-name">Amoxicilina 👶🏻</span><span class="price">1200$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Pomada</h3>
+        <ul class="items">
+          <li><span class="item-name">Aciclovir</span><span class="price">1500$</span></li>
+          <li><span class="item-name">Miconazol</span><span class="price">1500$</span></li>
+          <li><span class="item-name">Hidrocortisona</span><span class="price">1500$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Antibióticos</h3>
+        <ul class="items">
+          <li><span class="item-name">Amoxicilina 🇨🇺</span><span class="price">700$</span></li>
+          <li><span class="item-name">Cefalexina 🇨🇺</span><span class="price">700$</span></li>
+          <li><span class="item-name">Levofloxacina</span><span class="price">600$</span></li>
+          <li><span class="item-name">Amoxicilina</span><span class="price">550$</span></li>
+          <li><span class="item-name">Sulfaprin</span><span class="price">550$</span></li>
+          <li><span class="item-name">Ciprofloxacino</span><span class="price">500$</span></li>
+          <li><span class="item-name">Doxcilina</span><span class="price">550$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Estómago</h3>
+        <ul class="items">
+          <li><span class="item-name">Polivit (pomo de 100)</span><span class="price">1500$</span></li>
+          <li><span class="item-name">Sales rehidratantes</span><span class="price">350$</span></li>
+          <li><span class="item-name">Metronidazol</span><span class="price">450$</span></li>
+          <li><span class="item-name">Mebendazol</span><span class="price">400$</span></li>
+          <li><span class="item-name">Domperidona + Omeprazol</span><span class="price">600$</span></li>
+          <li><span class="item-name">Omeprazol</span><span class="price">400$</span></li>
+          <li><span class="item-name">Gravinol</span><span class="price">400$</span></li>
+          <li><span class="item-name">Ácido fólico</span><span class="price">350$</span></li>
+          <li><span class="item-name">Ácido fólico 🇨🇺</span><span class="price">500$</span></li>
+          <li><span class="item-name">Metocopramida</span><span class="price">360$</span></li>
+          <li><span class="item-name">Cyproheptadina</span><span class="price">400$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Alergia</h3>
+        <ul class="items">
+          <li><span class="item-name">Prednisolona</span><span class="price">400$/mg</span></li>
+          <li><span class="item-name">Loratadina 🇨🇺</span><span class="price">500$</span></li>
+          <li><span class="item-name">Espray de salbutamol</span><span class="price">2600$</span></li>
+          <li><span class="item-name">Benadrilina</span><span class="price">450$</span></li>
+          <li><span class="item-name">Cetirizina</span><span class="price">360$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Corazón</h3>
+        <ul class="items">
+          <li><span class="item-name">Espironolactona 🇨🇺 (20 pastillas)</span><span class="price">800$</span></li>
+          <li><span class="item-name">Atenolol</span><span class="price">350$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Diabetes</h3>
+        <ul class="items">
+          <li><span class="item-name">Metformina (30 pastillas), pomo 🇨🇺</span><span class="price">1000$</span></li>
+          <li><span class="item-name">Metoclopramida</span><span class="price">360$</span></li>
+          <li><span class="item-name">Metformina 🇨🇺</span><span class="price">400$</span></li>
+          <li><span class="item-name">Glibenclamida</span><span class="price">360$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Presión arterial</h3>
+        <ul class="items">
+          <li><span class="item-name">Lisinopril (30 pastillas)</span><span class="price">Consultar</span></li>
+          <li><span class="item-name">Enalapril</span><span class="price">350$</span></li>
+          <li><span class="item-name">Metildopa (50 pastillas) 🇨🇺</span><span class="price">800$</span></li>
+          <li><span class="item-name">Captopril</span><span class="price">350$</span></li>
+          <li><span class="item-name">Enalapril</span><span class="price">350$</span></li>
+          <li><span class="item-name">Captopril (30 pastillas)</span><span class="price">900$</span></li>
+          <li><span class="item-name">Furosemida</span><span class="price">360$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Colirio</h3>
+        <ul class="items">
+          <li><span class="item-name">Ketotifeno</span><span class="price">900$</span></li>
+          <li><span class="item-name">Prednisolona</span><span class="price">900$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Dolores</h3>
+        <ul class="items">
+          <li><span class="item-name">Duragina (México, de la Verde)</span><span class="price">700$</span></li>
+          <li><span class="item-name">Diclofenaco potasio</span><span class="price">400$</span></li>
+          <li><span class="item-name">Dolocon</span><span class="price">600$</span></li>
+          <li><span class="item-name">Diclofenaco</span><span class="price">400$</span></li>
+          <li><span class="item-name">Paracetamol 🇨🇺</span><span class="price">400$</span></li>
+          <li><span class="item-name">Aspirina (81 mg)</span><span class="price">360$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Para las damas</h3>
+        <ul class="items">
+          <li><span class="item-name">Oceira (anticonceptiva)</span><span class="price">900$</span></li>
+          <li><span class="item-name">Prueba de embarazo</span><span class="price">460$</span></li>
+          <li><span class="item-name">Día después</span><span class="price">1000$</span></li>
+          <li><span class="item-name">Óvulos de metronidazol (6)</span><span class="price">600$</span></li>
+          <li><span class="item-name">Óvulos de nistatina (6)</span><span class="price">600$</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h3>Otros</h3>
+        <ul class="items">
+          <li><span class="item-name">Oceira (anticonceptivas)</span><span class="price">900$</span></li>
+          <li><span class="item-name">Biagra (4 pastillas, azul)</span><span class="price">700$</span></li>
+          <li><span class="item-name">Troca 24/18/20</span><span class="price">400$</span></li>
+          <li><span class="item-name">Jeringuilla 10 ml / 5 ml</span><span class="price">350$</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <p class="empty" id="empty">No encontramos productos con ese nombre. Prueba otra búsqueda.</p>
+
+    <aside class="notice">
+      <strong>Importante:</strong> Este catálogo es informativo. Confirma siempre el nombre correcto, concentración, presentación, disponibilidad y precio antes de comprar. Los medicamentos —especialmente antibióticos, corticoides y productos para la presión o la diabetes— deben utilizarse con orientación de un profesional de salud. No te automediques.
+    </aside>
+  </main>
+
+  <section class="contact" id="contacto">
+    <div class="contact-inner">
+      <h2>¿Necesitas información?</h2>
+      <p>Escríbenos para consultar disponibilidad y confirmar los detalles del producto.</p>
+      <a class="button button-main" href="sms:+5356877310?body=Hola,%20quisiera%20consultar%20por%20un%20producto%20del%20cat%C3%A1logo.">Enviar mensaje SMS</a>
+    </div>
+  </section>
+
+  <footer>© <span id="year"></span> Medicamentos Colón · Catálogo sujeto a cambios</footer>
+
+  <script>
+    const search = document.getElementById('search');
+    const cards = [...document.querySelectorAll('.card')];
+    const count = document.getElementById('count');
+    const empty = document.getElementById('empty');
+
+    function filterCatalog() {
+      const term = search.value.trim().toLocaleLowerCase('es');
+      let visible = 0;
+      cards.forEach(card => {
+        const matches = card.textContent.toLocaleLowerCase('es').includes(term);
+        card.hidden = !matches;
+        if (matches) visible++;
+      });
+      count.textContent = `${visible} ${visible === 1 ? 'categoría' : 'categorías'}`;
+      empty.style.display = visible ? 'none' : 'block';
+    }
+    search.addEventListener('input', filterCatalog);
+    document.getElementById('year').textContent = new Date().getFullYear();
+    filterCatalog();
+  </script>
+</body>
+</html>
