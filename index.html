@@ -1,254 +1,82 @@
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Catálogo informativo de Medicamentos Colón. Consulta disponibilidad y precios por mensaje.">
-  <title>Medicamentos Colón | Catálogo</title>
-  <style>
-    :root{
-      --navy:#123047; --blue:#176b87; --teal:#20a38a; --ink:#20313b;
-      --muted:#657782; --paper:#f4f8fa; --white:#fff; --line:#e3ecef;
-      --shadow:0 12px 32px rgba(18,48,71,.08);
-    }
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
-    a{color:inherit}
-    .topbar{background:var(--navy);color:#eaf7fa;padding:10px 5%;font-size:.9rem}
-    .topbar-inner{max-width:1120px;margin:auto;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    header{background:linear-gradient(120deg,#123047 0%,#176b87 65%,#20a38a 120%);color:white;padding:64px 20px 58px;text-align:center}
-    .hero{max-width:850px;margin:auto}
-    .badge{display:inline-block;border:1px solid rgba(255,255,255,.45);border-radius:30px;padding:6px 13px;font-size:.8rem;letter-spacing:.07em;text-transform:uppercase}
-    h1{font-size:clamp(2.2rem,6vw,3.7rem);line-height:1.08;margin:18px 0 12px}
-    .hero p{font-size:1.1rem;color:#e4f4f5;margin:0 auto 25px;max-width:650px}
-    .button{display:inline-block;text-decoration:none;border:0;border-radius:10px;padding:12px 20px;font-weight:700;cursor:pointer}
-    .button-light{background:white;color:var(--navy)}
-    main{max-width:1120px;margin:auto;padding:42px 20px 55px}
-    .intro{text-align:center;margin-bottom:25px}
-    .intro h2{font-size:clamp(1.6rem,4vw,2.2rem);color:var(--navy);margin:0 0 8px}
-    .intro p{color:var(--muted);margin:0}
-    .tools{display:flex;gap:12px;max-width:720px;margin:25px auto 30px;flex-wrap:wrap}
-    .search{flex:1 1 260px;padding:14px 16px;border:1px solid #cfdee4;border-radius:10px;font-size:1rem;background:white;outline:none}
-    .search:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,107,135,.12)}
-    .count{align-self:center;color:var(--muted);font-size:.9rem}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-    .card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
-    .card h3{margin:0 0 15px;color:var(--blue);font-size:1.08rem;letter-spacing:.035em;text-transform:uppercase}
-    .items{list-style:none;margin:0;padding:0}
-    .items li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #edf2f4;font-size:.96rem}
-    .items li:first-child{border-top:0}
-    .item-name{min-width:0}
-    .price{font-weight:700;color:var(--navy);white-space:nowrap}
-    .empty{display:none;text-align:center;color:var(--muted);padding:35px}
-    .notice{margin:30px 0 0;background:#fff8e8;border:1px solid #f1dfb6;border-radius:12px;padding:17px 19px;color:#654d20;font-size:.92rem}
-    .contact{background:#e9f3f5;text-align:center;padding:42px 20px}
-    .contact-inner{max-width:700px;margin:auto}
-    .contact h2{color:var(--navy);margin:0 0 8px;font-size:1.8rem}
-    .contact p{color:var(--muted);margin:0 0 20px}
-    .button-main{background:var(--teal);color:white}
-    footer{background:var(--navy);color:#c8d9df;text-align:center;padding:18px;font-size:.85rem}
-    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:560px){header{padding:48px 18px}.grid{grid-template-columns:1fr}main{padding:32px 15px}.card{padding:19px}.topbar-inner{justify-content:center;text-align:center}}
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <div class="topbar-inner">
-      <span>Medicamentos Colón</span>
-      <span>Consulta disponibilidad y precios por mensaje</span>
-    </div>
-  </div>
-
-  <header>
-    <div class="hero">
-      <span class="badge">Catálogo de productos</span>
-      <h1>MEDICAMENTOS COLÓN</h1>
-      <p>Consulta nuestro catálogo y escríbenos para confirmar disponibilidad, presentación y precio.</p>
-      <a class="button button-light" href="#catalogo">Ver catálogo</a>
-    </div>
-  </header>
-
-  <main id="catalogo">
-    <section class="intro">
-      <h2>¿Qué estás buscando?</h2>
-      <p>Explora las categorías o escribe el nombre de un producto en el buscador.</p>
-    </section>
-
-    <div class="tools">
-      <input id="search" class="search" type="search" placeholder="Buscar medicamento o categoría..." aria-label="Buscar en el catálogo">
-      <span class="count" id="count" aria-live="polite"></span>
-    </div>
-
-    <section class="grid" id="productGrid" aria-label="Categorías del catálogo">
-      <article class="card">
-        <h3>Suspensión</h3>
-        <ul class="items">
-          <li><span class="item-name">Nistatina 👶🏻</span><span class="price">1500$</span></li>
-          <li><span class="item-name">Amoxicilina 👶🏻</span><span class="price">1200$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Pomada</h3>
-        <ul class="items">
-          <li><span class="item-name">Aciclovir</span><span class="price">1500$</span></li>
-          <li><span class="item-name">Miconazol</span><span class="price">1500$</span></li>
-          <li><span class="item-name">Hidrocortisona</span><span class="price">1500$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Antibióticos</h3>
-        <ul class="items">
-          <li><span class="item-name">Amoxicilina 🇨🇺</span><span class="price">700$</span></li>
-          <li><span class="item-name">Cefalexina 🇨🇺</span><span class="price">700$</span></li>
-          <li><span class="item-name">Levofloxacina</span><span class="price">600$</span></li>
-          <li><span class="item-name">Amoxicilina</span><span class="price">550$</span></li>
-          <li><span class="item-name">Sulfaprin</span><span class="price">550$</span></li>
-          <li><span class="item-name">Ciprofloxacino</span><span class="price">500$</span></li>
-          <li><span class="item-name">Doxcilina</span><span class="price">550$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Estómago</h3>
-        <ul class="items">
-          <li><span class="item-name">Polivit (pomo de 100)</span><span class="price">1500$</span></li>
-          <li><span class="item-name">Sales rehidratantes</span><span class="price">350$</span></li>
-          <li><span class="item-name">Metronidazol</span><span class="price">450$</span></li>
-          <li><span class="item-name">Mebendazol</span><span class="price">400$</span></li>
-          <li><span class="item-name">Domperidona + Omeprazol</span><span class="price">600$</span></li>
-          <li><span class="item-name">Omeprazol</span><span class="price">400$</span></li>
-          <li><span class="item-name">Gravinol</span><span class="price">400$</span></li>
-          <li><span class="item-name">Ácido fólico</span><span class="price">350$</span></li>
-          <li><span class="item-name">Ácido fólico 🇨🇺</span><span class="price">500$</span></li>
-          <li><span class="item-name">Metocopramida</span><span class="price">360$</span></li>
-          <li><span class="item-name">Cyproheptadina</span><span class="price">400$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Alergia</h3>
-        <ul class="items">
-          <li><span class="item-name">Prednisolona</span><span class="price">400$/mg</span></li>
-          <li><span class="item-name">Loratadina 🇨🇺</span><span class="price">500$</span></li>
-          <li><span class="item-name">Espray de salbutamol</span><span class="price">2600$</span></li>
-          <li><span class="item-name">Benadrilina</span><span class="price">450$</span></li>
-          <li><span class="item-name">Cetirizina</span><span class="price">360$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Corazón</h3>
-        <ul class="items">
-          <li><span class="item-name">Espironolactona 🇨🇺 (20 pastillas)</span><span class="price">800$</span></li>
-          <li><span class="item-name">Atenolol</span><span class="price">350$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Diabetes</h3>
-        <ul class="items">
-          <li><span class="item-name">Metformina (30 pastillas), pomo 🇨🇺</span><span class="price">1000$</span></li>
-          <li><span class="item-name">Metoclopramida</span><span class="price">360$</span></li>
-          <li><span class="item-name">Metformina 🇨🇺</span><span class="price">400$</span></li>
-          <li><span class="item-name">Glibenclamida</span><span class="price">360$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Presión arterial</h3>
-        <ul class="items">
-          <li><span class="item-name">Lisinopril (30 pastillas)</span><span class="price">Consultar</span></li>
-          <li><span class="item-name">Enalapril</span><span class="price">350$</span></li>
-          <li><span class="item-name">Metildopa (50 pastillas) 🇨🇺</span><span class="price">800$</span></li>
-          <li><span class="item-name">Captopril</span><span class="price">350$</span></li>
-          <li><span class="item-name">Enalapril</span><span class="price">350$</span></li>
-          <li><span class="item-name">Captopril (30 pastillas)</span><span class="price">900$</span></li>
-          <li><span class="item-name">Furosemida</span><span class="price">360$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Colirio</h3>
-        <ul class="items">
-          <li><span class="item-name">Ketotifeno</span><span class="price">900$</span></li>
-          <li><span class="item-name">Prednisolona</span><span class="price">900$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Dolores</h3>
-        <ul class="items">
-          <li><span class="item-name">Duragina (México, de la Verde)</span><span class="price">700$</span></li>
-          <li><span class="item-name">Diclofenaco potasio</span><span class="price">400$</span></li>
-          <li><span class="item-name">Dolocon</span><span class="price">600$</span></li>
-          <li><span class="item-name">Diclofenaco</span><span class="price">400$</span></li>
-          <li><span class="item-name">Paracetamol 🇨🇺</span><span class="price">400$</span></li>
-          <li><span class="item-name">Aspirina (81 mg)</span><span class="price">360$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Para las damas</h3>
-        <ul class="items">
-          <li><span class="item-name">Oceira (anticonceptiva)</span><span class="price">900$</span></li>
-          <li><span class="item-name">Prueba de embarazo</span><span class="price">460$</span></li>
-          <li><span class="item-name">Día después</span><span class="price">1000$</span></li>
-          <li><span class="item-name">Óvulos de metronidazol (6)</span><span class="price">600$</span></li>
-          <li><span class="item-name">Óvulos de nistatina (6)</span><span class="price">600$</span></li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>Otros</h3>
-        <ul class="items">
-          <li><span class="item-name">Oceira (anticonceptivas)</span><span class="price">900$</span></li>
-          <li><span class="item-name">Biagra (4 pastillas, azul)</span><span class="price">700$</span></li>
-          <li><span class="item-name">Troca 24/18/20</span><span class="price">400$</span></li>
-          <li><span class="item-name">Jeringuilla 10 ml / 5 ml</span><span class="price">350$</span></li>
-        </ul>
-      </article>
-    </section>
-
-    <p class="empty" id="empty">No encontramos productos con ese nombre. Prueba otra búsqueda.</p>
-
-    <aside class="notice">
-      <strong>Importante:</strong> Este catálogo es informativo. Confirma siempre el nombre correcto, concentración, presentación, disponibilidad y precio antes de comprar. Los medicamentos —especialmente antibióticos, corticoides y productos para la presión o la diabetes— deben utilizarse con orientación de un profesional de salud. No te automediques.
-    </aside>
-  </main>
-
-  <section class="contact" id="contacto">
-    <div class="contact-inner">
-      <h2>¿Necesitas información?</h2>
-      <p>Escríbenos para consultar disponibilidad y confirmar los detalles del producto.</p>
-      <a class="button button-main" href="sms:+5356877310?body=Hola,%20quisiera%20consultar%20por%20un%20producto%20del%20cat%C3%A1logo.">Enviar mensaje SMS</a>
-    </div>
-  </section>
-
-  <footer>© <span id="year"></span> Medicamentos Colón · Catálogo sujeto a cambios</footer>
-
-  <script>
-    const search = document.getElementById('search');
-    const cards = [...document.querySelectorAll('.card')];
-    const count = document.getElementById('count');
-    const empty = document.getElementById('empty');
-
-    function filterCatalog() {
-      const term = search.value.trim().toLocaleLowerCase('es');
-      let visible = 0;
-      cards.forEach(card => {
-        const matches = card.textContent.toLocaleLowerCase('es').includes(term);
-        card.hidden = !matches;
-        if (matches) visible++;
-      });
-      count.textContent = `${visible} ${visible === 1 ? 'categoría' : 'categorías'}`;
-      empty.style.display = visible ? 'none' : 'block';
-    }
-    search.addEventListener('input', filterCatalog);
-    document.getElementById('year').textContent = new Date().getFullYear();
-    filterCatalog();
-  </script>
-</body>
-</html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medicamentos Colón | Catálogo</title>
+<style>
+:root{--navy:#123047;--blue:#176b87;--green:#159b82;--bg:#f3f7f8;--line:#e1eaed}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#20313b;font:16px Arial;line-height:1.5}
+header{background:linear-gradient(120deg,var(--navy),var(--blue),var(--green));color:white;text-align:center;padding:48px 16px}
+h1{font-size:clamp(2rem,6vw,3.4rem);margin:10px}header p{color:#e8f5f5}
+main{max-width:1100px;margin:auto;padding:28px 16px}.bar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+input,select{padding:12px;border:1px solid #cbd9de;border-radius:8px;font:inherit;min-width:0}
+#search{flex:1}.btn{border:0;border-radius:8px;padding:11px 15px;font-weight:bold;cursor:pointer;background:var(--green);color:white}
+.soft{background:#e6f0f3;color:var(--navy)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:0 6px 20px #1230470b}
+.card h3{color:var(--blue);margin:0 0 12px}.product{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #edf1f3;padding:9px 0;font-size:14px}
+.price{font-weight:bold;white-space:nowrap}.available{font-size:11px;color:#16815f}.out{color:#b84242}
+.add{background:#e4f4ef;color:#08765f;border:0;padding:6px 9px;border-radius:6px;cursor:pointer}.add:disabled{opacity:.4}
+.layout{display:grid;grid-template-columns:1fr 280px;gap:15px}.cart{position:sticky;top:10px}.row{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+.notice{background:#fff5dc;padding:14px;border-radius:9px;margin-top:24px;font-size:13px}
+footer{text-align:center;background:var(--navy);color:white;padding:20px}
+.fab{position:fixed;right:18px;bottom:18px;border-radius:30px;z-index:5}
+.chat{display:none;position:fixed;right:18px;bottom:75px;width:min(350px,calc(100vw - 36px));height:420px;background:white;border:1px solid #ccd9df;border-radius:14px;z-index:6;box-shadow:0 10px 35px #0003;overflow:hidden;flex-direction:column}
+.chat.open{display:flex}.chathead{background:var(--navy);color:white;padding:12px;display:flex;justify-content:space-between}
+#messages{padding:12px;overflow:auto;flex:1;background:#f7fafb}.bubble{background:white;border:1px solid var(--line);border-radius:10px;padding:9px;margin:0 0 8px;font-size:13px;white-space:pre-wrap}.bubble.me{background:#e5f4ef;margin-left:25px}.smslink{display:inline-block;margin-top:9px;padding:7px 10px;border-radius:7px;background:#176b87;color:white;text-decoration:none;font-weight:bold;font-size:12px}
+.chatform{display:flex;padding:8px;gap:6px}.chatform input{flex:1;width:60%}
+.modal{display:none;position:fixed;inset:0;background:#102b3bb8;z-index:9;padding:15px;align-items:center;justify-content:center}.modal.show{display:flex}
+.box{background:white;border-radius:13px;padding:18px;width:min(850px,100%);max-height:90vh;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:15px}td,th{padding:7px;border-bottom:1px solid var(--line);text-align:left}td input,td select{width:100%;padding:6px}
+.adminform{display:flex;gap:7px;flex-wrap:wrap;margin:15px 0}.adminform input{flex:1}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.cart{position:static;order:-1}}
+@media(max-width:540px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<header><small>CATÁLOGO DE PRODUCTOS</small><h1>MEDICAMENTOS COLÓN</h1><p>Consulta productos, precios y prepara tu solicitud de pedido.</p></header>
+<main><h2 style="text-align:center;color:#123047">Catálogo</h2>
+<div class="bar"><input id="search" placeholder="🔎 Buscar medicamento o categoría"><span id="count"></span><button class="btn soft" id="adminOpen">⚙ Administrar</button></div>
+<div class="layout"><section><div class="grid" id="catalog"></div><p id="none" style="display:none">No se encontraron productos.</p></section>
+<aside class="panel cart"><h3>🛒 Mi solicitud</h3><div id="cart">Aún no has agregado productos.</div><hr><b>Total estimado: <span id="total">0$</span></b><p><button class="btn" id="order" style="width:100%">Enviar pedido por WhatsApp</button></p><small>El precio y la existencia deben confirmarse antes de completar el pedido.</small></aside></div>
+<div class="notice"><b>Importante:</b> Catálogo informativo. Confirma nombre, concentración, presentación, disponibilidad y precio. El asistente no diagnostica ni recomienda tratamientos o dosis. Consulta a un profesional de salud.</div>
+</main><footer>© <span id="year"></span> Medicamentos Colón</footer>
+<button class="btn fab" onclick="chatToggle()">💬 Asistente virtual</button>
+<div class="chat" id="chat"><div class="chathead"><b>Asistente Medicamentos Colón</b><button onclick="chatToggle(false)" style="background:none;color:white;border:0">✕</button></div><div id="messages"><div class="bubble">¡Hola! Puedo buscar productos y mostrar los precios del catálogo. ¿Qué necesitas encontrar?</div></div><form class="chatform" id="chatform"><input id="question" placeholder="Escribe tu consulta"><button class="btn">Enviar</button></form></div>
+<div class="modal" id="modal"><div class="box"><div style="display:flex;justify-content:space-between"><h2>Administración</h2><button class="btn soft" id="close">Cerrar</button></div>
+<div id="login"><p>Introduce el PIN para administrar productos.</p><input id="pin" type="password" placeholder="PIN"><button class="btn" id="loginBtn">Entrar</button><p><small>PIN inicial de demostración: 2468. Cámbialo antes de publicar. Esta protección no sustituye un inicio de sesión seguro en servidor.</small></p></div>
+<div id="admin" style="display:none"><p><small>Los cambios se guardan en este navegador. Para que varios usuarios vean el mismo inventario se necesita una base de datos y servidor.</small></p>
+<div class="adminform"><input id="nname" placeholder="Producto"><input id="nprice" placeholder="Precio"><input id="ncat" placeholder="Categoría"><select id="nstock"><option value="true">Disponible</option><option value="false">Agotado</option></select><button class="btn" id="add">Agregar</button></div>
+<div style="overflow:auto"><table><thead><tr><th>Producto</th><th>Precio</th><th>Categoría</th><th>Existencia</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+<p><button class="btn soft" id="export">Exportar catálogo</button> <label class="btn soft" for="import">Importar catálogo</label><input id="import" type="file" accept="application/json" style="display:none"> <button class="btn soft" id="reset">Restaurar original</button></p></div></div></div>
+<script>
+const seed=[
+['Suspensión','Nistatina 👶🏻','1500$'],['Suspensión','Amoxicilina 👶🏻','1200$'],
+['Pomada','Aciclovir','1500$'],['Pomada','Miconazol','1500$'],['Pomada','Hidrocortisona','1500$'],
+['Antibióticos','Amoxicilina 🇨🇺','700$'],['Antibióticos','Cefalexina 🇨🇺','700$'],['Antibióticos','Levofloxacina','600$'],['Antibióticos','Amoxicilina','550$'],['Antibióticos','Sulfaprin','550$'],['Antibióticos','Ciprofloxacino','500$'],['Antibióticos','Doxcilina','550$'],
+['Estómago','Polivit (pomo de 100)','1500$'],['Estómago','Sales rehidratantes','350$'],['Estómago','Metronidazol','450$'],['Estómago','Mebendazol','400$'],['Estómago','Domperidona + Omeprazol','600$'],['Estómago','Omeprazol','400$'],['Estómago','Gravinol','400$'],['Estómago','Ácido fólico','350$'],['Estómago','Ácido fólico 🇨🇺','500$'],['Estómago','Metocopramida','360$'],['Estómago','Cyproheptadina','400$'],
+['Alergia','Prednisolona','400$/mg'],['Alergia','Loratadina 🇨🇺','500$'],['Alergia','Espray de salbutamol','2600$'],['Alergia','Benadrilina','450$'],['Alergia','Cetirizina','360$'],
+['Corazón','Espironolactona 🇨🇺 (20 pastillas)','800$'],['Corazón','Atenolol','350$'],
+['Diabetes','Metformina (30 pastillas), pomo 🇨🇺','1000$'],['Diabetes','Metoclopramida','360$'],['Diabetes','Metformina 🇨🇺','400$'],['Diabetes','Glibenclamida','360$'],
+['Presión arterial','Lisinopril (30 pastillas)','Consultar'],['Presión arterial','Enalapril','350$'],['Presión arterial','Metildopa (50 pastillas) 🇨🇺','800$'],['Presión arterial','Captopril','350$'],['Presión arterial','Enalapril','350$'],['Presión arterial','Captopril (30 pastillas)','900$'],['Presión arterial','Furosemida','360$'],
+['Colirio','Ketotifeno','900$'],['Colirio','Prednisolona','900$'],
+['Dolores','Duragina (México, de la Verde)','700$'],['Dolores','Diclofenaco potasio','400$'],['Dolores','Dolocon','600$'],['Dolores','Diclofenaco','400$'],['Dolores','Paracetamol 🇨🇺','400$'],['Dolores','Aspirina (81 mg)','360$'],
+['Para las damas','Oceira (anticonceptiva)','900$'],['Para las damas','Prueba de embarazo','460$'],['Para las damas','Día después','1000$'],['Para las damas','Óvulos de metronidazol (6)','600$'],['Para las damas','Óvulos de nistatina (6)','600$'],
+['Otros','Oceira (anticonceptivas)','900$'],['Otros','Biagra (4 pastillas, azul)','700$'],['Otros','Troca 24/18/20','400$'],['Otros','Jeringuilla 10 ml / 5 ml','350$']
+].map((x,i)=>({id:i+1,category:x[0],name:x[1],price:x[2],stock:true}));
+const KEY='mc_catalog_v1',CART='mc_cart_v1';let products=JSON.parse(localStorage.getItem(KEY)||'null')||seed,bag=JSON.parse(localStorage.getItem(CART)||'{}');
+const $=id=>document.getElementById(id),clean=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function save(){localStorage.setItem(KEY,JSON.stringify(products))}
+function render(){let q=clean($('search').value),found=products.filter(p=>clean(p.name+' '+p.category).includes(q)),groups={};found.forEach(p=>(groups[p.category]??=[]).push(p));$('catalog').innerHTML=Object.entries(groups).map(([cat,items])=>`<article class="card"><h3>${safe(cat)}</h3>${items.map(p=>`<div class="product"><div>${safe(p.name)}<div class="${p.stock?'available':'available out'}">${p.stock?'● Disponible':'● Agotado'}</div></div><div style="text-align:right"><div class="price">${safe(p.price)}</div><button class="add" data-add="${p.id}" ${p.stock?'':'disabled'}>+ Agregar</button></div></div>`).join('')}</article>`).join('');$('count').textContent=found.length+' productos';$('none').style.display=found.length?'none':'block';document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{bag[b.dataset.add]=(bag[b.dataset.add]||0)+1;saveCart();renderCart()})}
+function saveCart(){localStorage.setItem(CART,JSON.stringify(bag))}
+function renderCart(){let entries=Object.entries(bag).filter(([id,n])=>n>0&&products.some(p=>p.id==id)),sum=0,known=true;if(!entries.length){$('cart').textContent='Aún no has agregado productos.';$('total').textContent='0$';return}$('cart').innerHTML=entries.map(([id,n])=>{let p=products.find(x=>x.id==id),v=Number((p.price.match(/[0-9]+/)||[])[0]);if(!v)known=false;sum+=v*n;return `<div class="row"><span>${safe(p.name)}<br>${safe(p.price)}</span><span><button data-minus="${id}">−</button> ${n} <button data-plus="${id}">+</button></span></div>`}).join('');$('total').textContent=known?sum+'$':'Consultar';document.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{let id=b.dataset.minus;if(--bag[id]<=0)delete bag[id];saveCart();renderCart()});document.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{bag[b.dataset.plus]++;saveCart();renderCart()})}
+$('search').oninput=render;$('year').textContent=new Date().getFullYear();render();renderCart();
+$('order').onclick=()=>{let lines=Object.entries(bag).filter(([id,n])=>n>0).map(([id,n])=>{let p=products.find(x=>x.id==id);return p?`- ${p.name} x${n}: ${p.price}`:''}).filter(Boolean);if(!lines.length)return alert('Agrega productos primero.');let msg=encodeURIComponent('Hola, quiero consultar este pedido de Medicamentos Colón:\n'+lines.join('\n')+'\nPor favor, confirmar disponibilidad y precio.');window.open('https://wa.me/5356877310?text='+msg,'_blank')};
+function chatToggle(force){$('chat').classList.toggle('open',force===undefined?!$('chat').classList.contains('open'):force)}
+function bubble(t,me=false){let d=document.createElement('div');d.className='bubble'+(me?' me':'');d.textContent=t;$('messages').append(d);$('messages').scrollTop=$('messages').scrollHeight;return d}
+function bubbleWithSms(t,message){let d=bubble(t);let a=document.createElement('a');a.className='smslink';a.href='sms:+5356877310?body='+encodeURIComponent(message);a.textContent='✉ Enviar SMS';d.appendChild(a);$('messages').scrollTop=$('messages').scrollHeight}
+$('chatform').onsubmit=e=>{e.preventDefault();let q=$('question').value.trim();if(!q)return;$('question').value='';bubble(q,true);let t=clean(q);if(/dosis|cuanto tomar|cuanta cantidad|para que sirve|recomienda|diagnost|tratamiento/.test(t)){bubble('Puedo localizar productos y mostrar los datos publicados, pero no puedo diagnosticar ni recomendar medicamentos, tratamientos o dosis. Consulta a un profesional de salud.');return}let matches=products.filter(p=>clean(p.name+' '+p.category).includes(t)).slice(0,8);if(matches.length){let details=matches.map(p=>`• ${p.name}: ${p.price} (${p.stock?'disponible':'agotado'})`).join('\n');bubbleWithSms('Esto aparece en el catálogo:\n'+details+'\nConfirma existencia y presentación antes de comprar.','Hola, quisiera consultar por: '+matches.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Está disponible?');return}let words=t.split(/\s+/).filter(w=>w.length>2),partial=products.filter(p=>words.some(w=>clean(p.name+' '+p.category).includes(w))).slice(0,8);if(partial.length){bubbleWithSms('Quizás buscas:\n'+partial.map(p=>`• ${p.name}: ${p.price}`).join('\n'),'Hola, quisiera consultar por: '+partial.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Me pueden confirmar disponibilidad y precio?');return}bubbleWithSms('No encuentro ese producto en el catálogo. Puedes enviar un SMS para preguntar por: '+q,'Hola, quisiera consultar si tienen: '+q+'. ¿Me pueden confirmar disponibilidad y precio?')};
+$('adminOpen').onclick=()=>{$('modal').classList.add('show');$('login').style.display='block';$('admin').style.display='none';$('pin').value=''};$('close').onclick=()=>$('modal').classList.remove('show');
+$('loginBtn').onclick=()=>{if($('pin').value!=='2468')return alert('PIN incorrecto');$('login').style.display='none';$('admin').style.display='block';adminRows()};
+function adminRows(){$('rows').innerHTML=products.map(p=>`<tr><td><input data-name="${p.id}" value="${safe(p.name)}"></td><td><input data-price="${p.id}" value="${safe(p.price)}"></td><td><input data-cat="${p.id}" value="${safe(p.category)}"></td><td><select data-stock="${p.id}"><option value="true" ${p.stock?'selected':''}>Disponible</option><option value="false" ${!p.stock?'selected':''}>Agotado</option></select></td><td><button class="btn soft" data-del="${p.id}">Borrar</button></td></tr>`).join('');document.querySelectorAll('[data-name],[data-price],[data-cat],[data-stock]').forEach(el=>el.onchange=()=>{let id=Number(el.dataset.name||el.dataset.price||el.dataset.cat||el.dataset.stock),p=products.find(x=>x.id===id);if(el.dataset.name)p.name=el.value;if(el.dataset.price)p.price=el.value;if(el.dataset.cat)p.category=el.value;if(el.dataset.stock)p.stock=el.value==='true';save();render();renderCart()});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este producto?')){products=products.filter(p=>p.id!=b.dataset.del);delete bag[b.dataset.del];save();saveCart();adminRows();render();renderCart()}})}
+$('add').onclick=()=>{let name=$('nname').value.trim(),price=$('nprice').value.trim(),category=$('ncat').value.trim();if(!name||!price||!category)return alert('Completa nombre, precio y categoría');products.push({id:Math.max(0,...products.map(p=>p.id))+1,name,price,category,stock:$('nstock').value==='true'});save();$('nname').value=$('nprice').value=$('ncat').value='';adminRows();render()};
+$('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(products,null,2)],{type:'application/json'}));a.href=u;a.download='catalogo-medicamentos-colon.json';a.click();URL.revokeObjectURL(u)};
+$('import').onchange=async e=>{try{let d=JSON.parse(await e.target.files[0].text());if(!Array.isArray(d)||!d.every(p=>p.name&&p.category&&p.price!==undefined))throw 0;products=d;save();adminRows();render()}catch{alert('Archivo de catálogo inválido')}e.target.value=''};
+$('reset').onclick=()=>{if(confirm('¿Restaurar el catálogo inicial?')){products=seed.map(p=>({...p}));save();adminRows();render()}};
+</script></body></html>
