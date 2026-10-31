@@ -39,8 +39,7 @@ table{border-collapse:collapse;width:100%;font-size:12px;margin-top:15px}td,th{p
 <button class="btn fab" onclick="chatToggle()">💬 Asistente virtual</button>
 <div class="chat" id="chat"><div class="chathead"><b>Asistente Medicamentos Colón</b><button onclick="chatToggle(false)" style="background:none;color:white;border:0">✕</button></div><div id="messages"><div class="bubble">¡Hola! Puedo buscar productos y mostrar los precios del catálogo. ¿Qué necesitas encontrar?</div></div><form class="chatform" id="chatform"><input id="question" placeholder="Escribe tu consulta"><button class="btn">Enviar</button></form></div>
 <div class="modal" id="modal"><div class="box"><div style="display:flex;justify-content:space-between"><h2>Administración</h2><button class="btn soft" id="close">Cerrar</button></div>
-<div id="login"><p>Inicia sesión como administrador.</p><input id="adminPin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off"><input id="adminPassword" type="password" placeholder="Contraseña" autocomplete="current-password"><button class="btn" id="loginBtn">Entrar</button><p><button type="button" id="changeAdminEmail" class="btn soft" style="font-size:12px">Cambiar correo administrador</button></p><p id="loginStatus" role="status" style="font-size:13px"></p></div>
-<div id="recovery" style="display:none"><h3>Crear contraseña nueva</h3><p>Escribe una contraseña nueva para tu usuario administrador.</p><input id="newPassword" type="password" autocomplete="new-password" placeholder="Contraseña nueva (mínimo 8 caracteres)" style="width:100%;margin-bottom:8px"><input id="confirmPassword" type="password" autocomplete="new-password" placeholder="Repetir contraseña" style="width:100%;margin-bottom:8px"><button class="btn" id="saveNewPassword" type="button">Guardar contraseña</button><p id="recoveryStatus" role="status"></p></div><div id="admin" style="display:none"><p><small>Los cambios se guardan en la base de datos y se comparten con todos los visitantes.</small></p>
+<div id="login"><p>Introduce tu PIN de administración.</p><input id="adminPin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" autocomplete="off"><button class="btn" id="loginBtn">Entrar</button><p id="loginStatus" role="status" style="font-size:13px"></p></div><div id="admin" style="display:none"><p><small>Los cambios se guardan en la base de datos y se comparten con todos los visitantes.</small></p>
 <div class="adminform"><input id="nname" placeholder="Producto"><input id="nprice" placeholder="Precio"><input id="ncat" placeholder="Categoría"><select id="nstock"><option value="true">Disponible</option><option value="false">Agotado</option></select><button class="btn" id="add">Agregar</button></div>
 <div style="margin:14px 0"><input id="adminSearch" type="search" placeholder="🔎 Buscar medicamento o categoría en Administración" aria-label="Buscar productos en administración" style="width:100%"><small id="adminSearchCount" aria-live="polite"></small></div>
 <div style="overflow:auto"><table><thead><tr><th>Producto</th><th>Precio</th><th>Categoría</th><th>Existencia</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
@@ -79,36 +78,18 @@ function chatToggle(force){$('chat').classList.toggle('open',force===undefined?!
 function bubble(t,me=false){let d=document.createElement('div');d.className='bubble'+(me?' me':'');d.textContent=t;$('messages').append(d);$('messages').scrollTop=$('messages').scrollHeight;return d}
 function bubbleWithSms(t,message){let d=bubble(t);let a=document.createElement('a');a.className='smslink';a.href='sms:+5356877310?body='+encodeURIComponent(message);a.textContent='✉ Enviar SMS';d.appendChild(a);$('messages').scrollTop=$('messages').scrollHeight}
 $('chatform').onsubmit=e=>{e.preventDefault();let q=$('question').value.trim();if(!q)return;$('question').value='';bubble(q,true);let t=clean(q);if(/dosis|cuanto tomar|cuanta cantidad|para que sirve|recomienda|diagnost|tratamiento/.test(t)){bubble('Puedo localizar productos y mostrar los datos publicados, pero no puedo diagnosticar ni recomendar medicamentos, tratamientos o dosis. Consulta a un profesional de salud.');return}let matches=products.filter(p=>clean(p.name+' '+p.category).includes(t)).slice(0,8);if(matches.length){let details=matches.map(p=>`• ${p.name}: ${p.price} (${p.stock?'disponible':'agotado'})`).join('\n');bubbleWithSms('Esto aparece en el catálogo:\n'+details+'\nConfirma existencia y presentación antes de comprar.','Hola, quisiera consultar por: '+matches.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Está disponible?');return}let words=t.split(/\s+/).filter(w=>w.length>2),partial=products.filter(p=>words.some(w=>clean(p.name+' '+p.category).includes(w))).slice(0,8);if(partial.length){bubbleWithSms('Quizás buscas:\n'+partial.map(p=>`• ${p.name}: ${p.price}`).join('\n'),'Hola, quisiera consultar por: '+partial.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Me pueden confirmar disponibilidad y precio?');return}bubbleWithSms('No encuentro ese producto en el catálogo. Puedes enviar un SMS para preguntar por: '+q,'Hola, quisiera consultar si tienen: '+q+'. ¿Me pueden confirmar disponibilidad y precio?')};
-$('adminOpen').onclick=()=>{if(recoveryMode){showRecovery();return;}$('recovery').style.display='none';$('modal').classList.add('show');$('login').style.display='block';$('admin').style.display='none';$('adminPassword').value='';$('adminPin').value='';$('loginStatus').textContent=''};$('close').onclick=()=>$('modal').classList.remove('show');
-// El enlace de recuperación de Supabase abre esta misma página.
-let recoveryMode=false;
-function showRecovery(){recoveryMode=true;$('modal').classList.add('show');$('login').style.display='none';$('admin').style.display='none';$('recovery').style.display='block'}
-if(db){
-  db.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY')showRecovery()});
-  // La recuperación también puede llegar con ?code=... (PKCE).
-  if(new URLSearchParams(location.search).has('code') || new URLSearchParams(location.hash.slice(1)).get('type')==='recovery'){
-    showRecovery();
-    db.auth.getSession().then(({data,error})=>{
-      if(error)$('recoveryStatus').textContent='El enlace no pudo validarse: '+error.message;
-      else if(!data.session)$('recoveryStatus').textContent='El enlace todavía no se ha validado. Espera unos segundos o solicita uno nuevo.';
-    });
-  }
-}
-$('saveNewPassword').onclick=async()=>{
-  const a=$('newPassword').value,b=$('confirmPassword').value;
-  if(a.length<8){$('recoveryStatus').textContent='La contraseña debe tener al menos 8 caracteres.';return}
-  if(a!==b){$('recoveryStatus').textContent='Las contraseñas no coinciden.';return}
-  $('recoveryStatus').textContent='Guardando...';
-  const {error}=await db.auth.updateUser({password:a});
-  if(error){$('recoveryStatus').textContent='No se pudo guardar: '+error.message;return}
-  $('recoveryStatus').textContent='Contraseña actualizada. Ya puedes entrar en Administración.';
-  $('newPassword').value='';$('confirmPassword').value='';
-  history.replaceState(null,'',location.pathname);
-  await db.auth.signOut();recoveryMode=false;
-  $('recovery').style.display='none';$('login').style.display='block';
+$('adminOpen').onclick=()=>{$('modal').classList.add('show');$('login').style.display='block';$('admin').style.display='none';$('adminPin').value='';$('loginStatus').textContent=''};
+$('close').onclick=()=>$('modal').classList.remove('show');
+$('loginBtn').onclick=async()=>{
+ if($('adminPin').value!=='9210'){$('loginStatus').textContent='PIN incorrecto';return;}
+ if(!db){$('loginStatus').textContent='No hay conexión con Supabase.';return;}
+ $('loginStatus').textContent='Comprobando permiso de edición...';
+ const {data:{session},error}=await db.auth.getSession();
+ if(error || !session){$('loginStatus').textContent='Para guardar cambios en todos los teléfonos se necesita una sesión autorizada de Supabase. El PIN por sí solo no concede ese permiso.';return;}
+ const {data:allowed,error:permissionError}=await db.from('catalog').update({updated_at:new Date().toISOString()}).eq('id',1).select('id');
+ if(permissionError || !allowed?.length){$('loginStatus').textContent='Esta sesión no tiene permiso para modificar el catálogo.';return;}
+ $('login').style.display='none';$('admin').style.display='block';await loadCatalog();adminRows();
 };
-$('changeAdminEmail').onclick=()=>{localStorage.removeItem('mc_admin_email');$('loginStatus').textContent='Se solicitará el correo al entrar.'};
-$('loginBtn').onclick=async()=>{if(!db)return alert('Primero configura Supabase en el archivo index.html');if($('adminPin').value!=='9210'){$('loginStatus').textContent='PIN incorrecto';return;}let email=localStorage.getItem('mc_admin_email');if(!email){email=prompt('Primera vez: escribe el correo del administrador registrado en Supabase:');if(!email)return;email=email.trim();localStorage.setItem('mc_admin_email',email)}$('loginStatus').textContent='Comprobando acceso...';const {data,error}=await db.auth.signInWithPassword({email,password:$('adminPassword').value});if(error){$('loginStatus').textContent='No se pudo iniciar sesión: '+error.message;return}const {data:allowed,error:permissionError}=await db.from('catalog').update({updated_at:new Date().toISOString()}).eq('id',1).select('id');if(permissionError || !allowed?.length){$('loginStatus').textContent='Cuenta sin permiso de administración.';await db.auth.signOut();return}$('login').style.display='none';$('admin').style.display='block';await loadCatalog();adminRows()};
 function adminRows(){const q=clean(($('adminSearch')?.value||'').trim());const filtered=products.filter(p=>clean(p.name+' '+p.category).includes(q));$('adminSearchCount').textContent=filtered.length+' de '+products.length+' productos';$('rows').innerHTML=filtered.map(p=>`<tr><td><input data-name="${p.id}" value="${safe(p.name)}"></td><td><input data-price="${p.id}" value="${safe(p.price)}"></td><td><input data-cat="${p.id}" value="${safe(p.category)}"></td><td><select data-stock="${p.id}"><option value="true" ${p.stock?'selected':''}>Disponible</option><option value="false" ${!p.stock?'selected':''}>Agotado</option></select></td><td><button class="btn soft" data-del="${p.id}">Borrar</button></td></tr>`).join('');document.querySelectorAll('[data-name],[data-price],[data-cat],[data-stock]').forEach(el=>el.onchange=()=>{let id=Number(el.dataset.name||el.dataset.price||el.dataset.cat||el.dataset.stock),p=products.find(x=>x.id===id);if(el.dataset.name)p.name=el.value;if(el.dataset.price)p.price=el.value;if(el.dataset.cat)p.category=el.value;if(el.dataset.stock)p.stock=el.value==='true';save();render()});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este producto?')){products=products.filter(p=>p.id!=b.dataset.del);save();adminRows();render()}})}
 $('adminSearch').addEventListener('input',adminRows);
 $('add').onclick=()=>{let name=$('nname').value.trim(),price=$('nprice').value.trim(),category=$('ncat').value.trim();if(!name||!price||!category)return alert('Completa nombre, precio y categoría');products.push({id:Math.max(0,...products.map(p=>p.id))+1,name,price,category,stock:$('nstock').value==='true'});save();$('nname').value=$('nprice').value=$('ncat').value='';adminRows();render()};
