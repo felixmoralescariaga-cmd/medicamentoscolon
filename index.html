@@ -66,9 +66,16 @@ const SUPABASE_ANON_KEY='sb_publishable_S_49qliU2jOhQOnB4SZnFw_MSA52850';
 const configured=SUPABASE_URL.startsWith('https://') && !SUPABASE_ANON_KEY.startsWith('PEGA_');
 const db=configured && window.supabase ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
 let products=seed.map(p=>({...p}));
-async function loadCatalog(){if(!db)return;const {data,error}=await db.from('catalog').select('products').eq('id',1).maybeSingle();if(error){console.error(error);return}if(data && Array.isArray(data.products) && data.products.length){products=data.products;render();if($('admin').style.display!=='none')adminRows()}}
-async function save(){if(!db){alert('Falta configurar Supabase. Los cambios NO se han publicado.');return}const {error}=await db.from('catalog').update({products}).eq('id',1);if(error){alert('No se pudo publicar el cambio: '+error.message);await loadCatalog()}else{await loadCatalog()}}
-loadCatalog();if(db)setInterval(loadCatalog,12000);
+let editingProductId=null;
+async function loadCatalog(){if(!db || editingProductId!==null)return;const {data,error}=await db.from('catalog').select('products').eq('id',1).maybeSingle();if(error){console.error(error);return}if(data && Array.isArray(data.products) && data.products.length){products=data.products;render();if($('admin').style.display!=='none')adminRows()}}
+async function save(){
+ if(!db){alert('No hay conexión con Supabase.');return}
+ if(!adminPinActivo){alert('Primero entra a Administración.');return}
+ const {data,error}=await db.rpc('catalog_admin_pin',{p_pin:adminPinActivo,p_action:'save',p_products:products});
+ if(error||!data?.ok){alert('No se pudo guardar: '+(error?.message||data?.message||'Error de autorización'));await loadCatalog();return}
+ await loadCatalog();
+}
+loadCatalog();if(db)setInterval(()=>{if(document.getElementById('admin').style.display==='none')loadCatalog()},12000);
 const $=id=>document.getElementById(id),clean=s=>String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
@@ -78,19 +85,48 @@ function chatToggle(force){$('chat').classList.toggle('open',force===undefined?!
 function bubble(t,me=false){let d=document.createElement('div');d.className='bubble'+(me?' me':'');d.textContent=t;$('messages').append(d);$('messages').scrollTop=$('messages').scrollHeight;return d}
 function bubbleWithSms(t,message){let d=bubble(t);let a=document.createElement('a');a.className='smslink';a.href='sms:+5356877310?body='+encodeURIComponent(message);a.textContent='✉ Enviar SMS';d.appendChild(a);$('messages').scrollTop=$('messages').scrollHeight}
 $('chatform').onsubmit=e=>{e.preventDefault();let q=$('question').value.trim();if(!q)return;$('question').value='';bubble(q,true);let t=clean(q);if(/dosis|cuanto tomar|cuanta cantidad|para que sirve|recomienda|diagnost|tratamiento/.test(t)){bubble('Puedo localizar productos y mostrar los datos publicados, pero no puedo diagnosticar ni recomendar medicamentos, tratamientos o dosis. Consulta a un profesional de salud.');return}let matches=products.filter(p=>clean(p.name+' '+p.category).includes(t)).slice(0,8);if(matches.length){let details=matches.map(p=>`• ${p.name}: ${p.price} (${p.stock?'disponible':'agotado'})`).join('\n');bubbleWithSms('Esto aparece en el catálogo:\n'+details+'\nConfirma existencia y presentación antes de comprar.','Hola, quisiera consultar por: '+matches.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Está disponible?');return}let words=t.split(/\s+/).filter(w=>w.length>2),partial=products.filter(p=>words.some(w=>clean(p.name+' '+p.category).includes(w))).slice(0,8);if(partial.length){bubbleWithSms('Quizás buscas:\n'+partial.map(p=>`• ${p.name}: ${p.price}`).join('\n'),'Hola, quisiera consultar por: '+partial.map(p=>p.name+' - '+p.price).join('; ')+'. ¿Me pueden confirmar disponibilidad y precio?');return}bubbleWithSms('No encuentro ese producto en el catálogo. Puedes enviar un SMS para preguntar por: '+q,'Hola, quisiera consultar si tienen: '+q+'. ¿Me pueden confirmar disponibilidad y precio?')};
+let adminPinActivo='';
 $('adminOpen').onclick=()=>{$('modal').classList.add('show');$('login').style.display='block';$('admin').style.display='none';$('adminPin').value='';$('loginStatus').textContent=''};
-$('close').onclick=()=>$('modal').classList.remove('show');
+$('close').onclick=()=>{$('modal').classList.remove('show');adminPinActivo='';$('admin').style.display='none'};
 $('loginBtn').onclick=async()=>{
- if($('adminPin').value!=='9210'){$('loginStatus').textContent='PIN incorrecto';return;}
- if(!db){$('loginStatus').textContent='No hay conexión con Supabase.';return;}
- $('loginStatus').textContent='Comprobando permiso de edición...';
- const {data:{session},error}=await db.auth.getSession();
- if(error || !session){$('loginStatus').textContent='Para guardar cambios en todos los teléfonos se necesita una sesión autorizada de Supabase. El PIN por sí solo no concede ese permiso.';return;}
- const {data:allowed,error:permissionError}=await db.from('catalog').update({updated_at:new Date().toISOString()}).eq('id',1).select('id');
- if(permissionError || !allowed?.length){$('loginStatus').textContent='Esta sesión no tiene permiso para modificar el catálogo.';return;}
+ const pin=$('adminPin').value.trim();
+ if(!/^\d{4}$/.test(pin)){$('loginStatus').textContent='Introduce un PIN de 4 dígitos.';return}
+ if(!db){$('loginStatus').textContent='No se pudo conectar con Supabase.';return}
+ $('loginStatus').textContent='Verificando PIN...';
+ const {data,error}=await db.rpc('catalog_admin_pin',{p_pin:pin,p_action:'check'});
+ if(error||!data?.ok){$('loginStatus').textContent=error?.message||data?.message||'No se pudo verificar el PIN.';return}
+ adminPinActivo=pin;
+ $('adminPin').value='';
  $('login').style.display='none';$('admin').style.display='block';await loadCatalog();adminRows();
 };
-function adminRows(){const q=clean(($('adminSearch')?.value||'').trim());const filtered=products.filter(p=>clean(p.name+' '+p.category).includes(q));$('adminSearchCount').textContent=filtered.length+' de '+products.length+' productos';$('rows').innerHTML=filtered.map(p=>`<tr><td><input data-name="${p.id}" value="${safe(p.name)}"></td><td><input data-price="${p.id}" value="${safe(p.price)}"></td><td><input data-cat="${p.id}" value="${safe(p.category)}"></td><td><select data-stock="${p.id}"><option value="true" ${p.stock?'selected':''}>Disponible</option><option value="false" ${!p.stock?'selected':''}>Agotado</option></select></td><td><button class="btn soft" data-del="${p.id}">Borrar</button></td></tr>`).join('');document.querySelectorAll('[data-name],[data-price],[data-cat],[data-stock]').forEach(el=>el.onchange=()=>{let id=Number(el.dataset.name||el.dataset.price||el.dataset.cat||el.dataset.stock),p=products.find(x=>x.id===id);if(el.dataset.name)p.name=el.value;if(el.dataset.price)p.price=el.value;if(el.dataset.cat)p.category=el.value;if(el.dataset.stock)p.stock=el.value==='true';save();render()});document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{if(confirm('¿Eliminar este producto?')){products=products.filter(p=>p.id!=b.dataset.del);save();adminRows();render()}})}
+function adminRows(){
+ const q=clean(($('adminSearch')?.value||'').trim());
+ const filtered=products.filter(p=>clean(p.name+' '+p.category).includes(q));
+ $('adminSearchCount').textContent=filtered.length+' de '+products.length+' productos';
+ $('rows').innerHTML=filtered.map(p=>{
+  const editing=editingProductId===p.id;
+  const locked=editing?'':'disabled';
+  return `<tr><td><input data-name="${p.id}" value="${safe(p.name)}" ${locked}></td><td><input data-price="${p.id}" value="${safe(p.price)}" ${locked}></td><td><input data-cat="${p.id}" value="${safe(p.category)}" ${locked}></td><td><select data-stock="${p.id}" ${locked}><option value="true" ${p.stock?'selected':''}>Disponible</option><option value="false" ${!p.stock?'selected':''}>Agotado</option></select></td><td><button class="btn" data-edit="${p.id}">${editing?'💾 Guardar':'✏️ Modificar'}</button> ${editing?`<button class="btn soft" data-cancel="${p.id}">Cancelar</button>`:`<button class="btn soft" data-del="${p.id}">Borrar</button>`}</td></tr>`;
+ }).join('');
+ document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=async()=>{
+  const id=Number(b.dataset.edit);
+  if(editingProductId!==id){editingProductId=id;adminRows();return;}
+  const row=b.closest('tr');
+  const name=row.querySelector('[data-name]').value.trim();
+  const price=row.querySelector('[data-price]').value.trim();
+  const category=row.querySelector('[data-cat]').value.trim();
+  const stock=row.querySelector('[data-stock]').value==='true';
+  if(!name||!price||!category){alert('Completa nombre, precio y categoría.');return;}
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  p.name=name;p.price=price;p.category=category;p.stock=stock;
+  b.disabled=true;b.textContent='Guardando...';
+  await save();
+  editingProductId=null;render();adminRows();
+ });
+ document.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>{editingProductId=null;adminRows()});
+ document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(confirm('¿Eliminar este producto?')){products=products.filter(p=>p.id!=b.dataset.del);await save();adminRows();render()}});
+}
 $('adminSearch').addEventListener('input',adminRows);
 $('add').onclick=()=>{let name=$('nname').value.trim(),price=$('nprice').value.trim(),category=$('ncat').value.trim();if(!name||!price||!category)return alert('Completa nombre, precio y categoría');products.push({id:Math.max(0,...products.map(p=>p.id))+1,name,price,category,stock:$('nstock').value==='true'});save();$('nname').value=$('nprice').value=$('ncat').value='';adminRows();render()};
 $('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(products,null,2)],{type:'application/json'}));a.href=u;a.download='catalogo-medicamentos-colon.json';a.click();URL.revokeObjectURL(u)};
